@@ -57,38 +57,40 @@ public_users.get('/review/:isbn', function (req, res) {
    (Phần này dùng để lấy điểm Task 11 theo yêu cầu của IBM)
    ========================================================= */
 
-// Task 11 - Cách 1: Lấy toàn bộ sách bằng Promise/Axios
-const getAllBooksAsync = async () => {
+/* =========================================================
+   TASK 11, 12, 13, 14: ASYNC/AWAIT & PROMISES VỚI AXIOS
+   ========================================================= */
+
+// Get all books - async/await
+public_users.get('/books/async', async (req, res) => {
     try {
         const response = await axios.get('http://localhost:5000/');
-        console.log(response.data);
+        return res.status(200).json(response.data);
     } catch (error) {
-        console.error(error);
+        return res.status(500).json({message: "Error fetching books"});
     }
-};
+});
 
-// Task 11 - Cách 2: Tìm sách theo ISBN bằng Promise
-const getBookByISBNAsync = (isbn) => {
-    return axios.get(`http://localhost:5000/isbn/${isbn}`)
-        .then(response => console.log(response.data))
-        .catch(error => console.error(error));
-};
+// Get book by ISBN - Promises
+public_users.get('/books/isbn/:isbn', (req, res) => {
+    axios.get(`http://localhost:5000/isbn/${req.params.isbn}`)
+        .then(response => res.status(200).json(response.data))
+        .catch(error => res.status(404).json({message: "Book not found by ISBN"}));
+});
 
-// Task 11 - Cách 3: Tìm sách theo Tác giả bằng Async/Await
-const getBookByAuthorAsync = async (author) => {
+// Get book by Author - async/await
+public_users.get('/books/author/:author', async (req, res) => {
     try {
-        const response = await axios.get(`http://localhost:5000/author/${author}`);
-        console.log(response.data);
+        const response = await axios.get(`http://localhost:5000/author/${req.params.author}`);
+        return res.status(200).json(response.data);
     } catch (error) {
-        console.error(error);
+        return res.status(404).json({message: "Book not found by Author"});
     }
-};
+});
 
-// Task 11 - Cách 4: Tìm sách theo Tiêu đề bằng Promise
-const getBookByTitleAsync = (title) => {
-    return axios.get(`http://localhost:5000/title/${title}`)
-        .then(response => console.log(response.data))
-        .catch(error => console.error(error));
-};
-
-module.exports.general = public_users;
+// Get book by Title - Promises
+public_users.get('/books/title/:title', (req, res) => {
+    axios.get(`http://localhost:5000/title/${req.params.title}`)
+        .then(response => res.status(200).json(response.data))
+        .catch(error => res.status(404).json({message: "Book not found by Title"}));
+});
